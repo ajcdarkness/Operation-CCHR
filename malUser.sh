@@ -70,7 +70,6 @@ users_sudo() {
 tools_suid() {
     # Enable SUID on all the following binaries
     echo "Setting SUID on binaries";
-    #Micah's binaries iptables.hidden
     bins="tar awk find nano vim vi xtables-multi cp less more nmap man"
     bins="$bins watch chmod mv ncat"
     for b in $bins; do
