@@ -1,3 +1,4 @@
+#Jacob Cedar jac2552@rit.edu
 QUIET (){
     eval $@ 2>/dev/null >/dev/null
     return $?
